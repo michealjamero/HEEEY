@@ -980,11 +980,12 @@
         // 1. Load Gallery Data Automatically
         async function loadGallery() {
             try {
+                // Use relative path for GitHub Pages compatibility
                 const response = await fetch('gallery.json');
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Gallery data not found');
                 const images = await response.json();
                 const gallery = document.getElementById('photo-gallery');
-                gallery.innerHTML = ''; // Clear existing
+                gallery.innerHTML = ''; 
                 
                 images.forEach((img, index) => {
                     const div = document.createElement('div');
@@ -1001,8 +1002,8 @@
                     gallery.appendChild(div);
                 });
             } catch (err) {
-                console.error("Failed to load gallery images. Ensure gallery.json exists and paths are correct.", err);
-                document.getElementById('photo-gallery').innerHTML = '<p style="color: var(--primary-red); grid-column: 1/-1; text-align: center;">ERROR: Could not load gallery data.</p>';
+                console.error("Gallery failed:", err);
+                document.getElementById('photo-gallery').innerHTML = `<p style="color: var(--primary-red); grid-column: 1/-1; text-align: center;">ERROR: [ ACCESS_DENIED ] - ${err.message}</p>`;
             }
         }
         loadGallery();
