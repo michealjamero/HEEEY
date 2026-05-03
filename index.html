@@ -979,14 +979,8 @@
 
         // 1. Load Gallery Data Automatically
         async function loadGallery() {
-            if (window.location.protocol === 'file:') {
-                console.error("PHP Gallery won't work on file:// protocol. Use http://localhost/ instead!");
-                document.getElementById('photo-gallery').innerHTML = '<p style="color: var(--primary-red); grid-column: 1/-1; text-align: center;">ERROR: PHP detected. Please open this site via XAMPP (http://localhost/ABOUT_MYSELF/) to see the gallery!</p>';
-                return;
-            }
-
             try {
-                const response = await fetch('get_gallery.php');
+                const response = await fetch('gallery.json');
                 if (!response.ok) throw new Error('Network response was not ok');
                 const images = await response.json();
                 const gallery = document.getElementById('photo-gallery');
@@ -997,7 +991,7 @@
                     div.className = 'photo-vault';
                     div.onclick = () => openLightbox(index);
                     div.innerHTML = `
-                        <img src="${img.url}" alt="Memory">
+                        <img src="${img.url}" alt="${img.alt}">
                         <div class="memory-data">
                             <span>FILE_${Math.floor(Math.random()*1000).toString().padStart(3, '0')}.LOG</span>
                             <span>STATUS: UNSEALED</span>
@@ -1007,7 +1001,8 @@
                     gallery.appendChild(div);
                 });
             } catch (err) {
-                console.error("Failed to load gallery images. Make sure the 'gallery' folder exists and 'get_gallery.php' is working.", err);
+                console.error("Failed to load gallery images. Ensure gallery.json exists and paths are correct.", err);
+                document.getElementById('photo-gallery').innerHTML = '<p style="color: var(--primary-red); grid-column: 1/-1; text-align: center;">ERROR: Could not load gallery data.</p>';
             }
         }
         loadGallery();
